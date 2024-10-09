@@ -17,10 +17,27 @@ public class ArvoreController {
 		arvore.adicionar(1);
 		
 		System.out.println(arvore.toString()+ "\n");
-		arvore.exibirEmOrdem();
-		arvore.exibirPosOrdem();
-		arvore.exibirPreOrdem();
+		//arvore.exibirEmOrdem();
+		//arvore.exibirPosOrdem();
+		//arvore.exibirPreOrdem();
 		
-		
+		try {
+			arvore.remover(22);
+			arvore.exibirPreOrdem();
+			
+			arvore.remover(21);
+			arvore.exibirEmOrdem();
+			
+			arvore.remover(31);
+			arvore.exibirPreOrdem();
+			
+			arvore.remover(20);
+			arvore.exibirPreOrdem();
+			
+			
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 }

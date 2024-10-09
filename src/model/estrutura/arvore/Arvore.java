@@ -28,14 +28,14 @@ public class Arvore<T extends Comparable<T>> {
 					if(buffer.getNoEsq() != null) {
 						buffer = buffer.getNoEsq();
 					}else {
-						buffer.setNoEsq(novo); //Atualiza ponteiro do node atual (buffer) para o novo node à esquerda
+						buffer.setNoEsq(novo); //atualiza ponteiro do node atual (buffer) para o novo node à esquerda
 						break;
 					}
 				}else {
 					if(buffer.getNoDir() != null) {
 						buffer = buffer.getNoDir();
 					}else {
-						buffer.setNoDir(novo); //Atualiza ponteiro do node atual (buffer) para o novo node à direita
+						buffer.setNoDir(novo); //atualiza ponteiro do node atual (buffer) para o novo node à direita
 						break;
 					}
 				}
@@ -91,6 +91,119 @@ public class Arvore<T extends Comparable<T>> {
 		}
 	}
 	
+	public void remover(T elemento) throws Exception {
+		if(this.raiz == null)
+			throw new Exception("A árvore está vazia");
+
+		No<T> atual = this.raiz; //Buffer de atual começando em raiz
+		No<T> pai = null; //Pai do atual. Começa em null pois a raiz não tem pai
+		
+		//Enquanto não achar o elemento e não terminar a árvore segue while
+		while(atual != null && atual.getElemento() != elemento) { 
+			pai = atual; //pai recebe o elemento atual, já que o atual receberá um novo node
+			if(elemento.compareTo(atual.getElemento()) < 0) { //Se o compareTo retornar um número negativo, o elemento é menor do que o node
+				atual = atual.getNoEsq(); //atual recebe esquerda pois elemento é menor
+			}else {
+				atual = atual.getNoDir(); //atual recebe direita pois elemento é maior
+			}
+		}
+		
+		if(atual == null) { //Se atual for null, a árvore foi percorrida e o elemento não existe
+			throw new Exception("Elemento não encontrado");
+		}else {
+			removeNode(pai, atual); //se não, chama remoção de node
+		}
+	}
+	
+	private void removeNode(No<T> pai, No<T> atual) {
+		/*
+		 * Três condições de remoção
+		 * 1 - Nó com dois filhos
+		 * 2 - Nó com um filho
+		 * 3 - Nó folha
+		 */
+		
+		if(atual.getNoDir() != null && atual.getNoEsq() != null) { //Node possui dois filhos
+			/*
+			 * Para fazer a substituição de um nó que possui dois filhos
+			 * uma das abordagens é usar o menor valor disponível à esquerda da subárvore à direita do node que será removido
+			 */
+			No<T> substituto = atual.getNoDir();
+			No<T> paiDoSubsTituto = atual;
+			while(substituto.getNoEsq() != null) {
+				paiDoSubsTituto = substituto;
+				substituto = substituto.getNoEsq(); //Busco o menor valor disponível para a substituição
+			}
+			
+			//Redefinição de ponteiros. Referência para os filhos do antigo node
+			substituto.setNoEsq(atual.getNoEsq());
+			
+			if(pai == null) { //Se não possuir pai, node é raiz da árvore
+				this.raiz = substituto;
+			}else {//Não é raiz
+				if(substituto.getElemento().compareTo(pai.getElemento()) < 0) { //Substituto é menor que pai
+					pai.setNoEsq(substituto);
+					paiDoSubsTituto.setNoEsq(null);
+				}else { //É maior que pai
+					pai.setNoDir(substituto);
+					paiDoSubsTituto.setNoDir(null);
+				}
+			}
+		}else if(atual.getNoDir() == null && atual.getNoEsq() == null) { 
+			/*
+			 * Não possui filhos, é um nó folha
+			 * Para remover um nó folha basta remover a referência do pai ao filho
+			 */
+			
+			if(pai == null) { //É raiz
+				this.raiz = null;
+			}else { //Não é raiz
+				if(atual.getElemento().compareTo(pai.getElemento()) < 0) { //Node a ser removido é menor que pai
+					pai.setNoEsq(null);
+					atual = null;
+				}else { //é maior que o pai
+					pai.setNoDir(null);
+					atual = null;
+				}
+			}
+		}else { 
+			/*
+			 * Possui apenas um filho
+			 * Para remover um node que possui apenas um filho, deve-se mover o filho para a posição do atual.
+			 */
+			No<T> filho = null;
+			if(pai != null) { //Não é raiz
+				if (atual.getNoDir() != null) { // Possui filho à direita
+					filho = atual.getNoDir();
+					atual = null;
+					if(filho.getElemento().compareTo(pai.getElemento()) < 0) {
+						pai.setNoEsq(filho);
+					}else {
+						pai.setNoDir(filho);
+					}
+				} else { // Possui filho à esquerda
+					filho = atual.getNoEsq();
+					atual = null;
+					if(filho.getElemento().compareTo(pai.getElemento()) < 0) {
+						pai.setNoEsq(filho);
+					}else {
+						pai.setNoDir(filho);
+					}
+				}
+			}else {//É raiz
+				if (atual.getNoDir() != null) { // Possui filho à direita
+					filho = atual.getNoDir();
+					atual = null;
+					this.raiz = filho;
+				} else { // Possui filho à esquerda
+					filho = atual.getNoEsq();
+					atual = null;
+					this.raiz = filho;
+				}
+			}
+		}
+	}
+
 	@Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
