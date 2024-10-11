@@ -22,7 +22,7 @@ public class ArvoreController {
 		//arvore.exibirPreOrdem();
 		
 		try {
-			arvore.remover(22);
+			arvore.remover(30);
 			arvore.exibirPreOrdem();
 			
 			arvore.remover(21);
@@ -36,7 +36,6 @@ public class ArvoreController {
 			
 			
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}

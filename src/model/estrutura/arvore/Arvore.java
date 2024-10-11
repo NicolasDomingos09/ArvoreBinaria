@@ -139,15 +139,22 @@ public class Arvore<T extends Comparable<T>> {
 			substituto.setNoEsq(atual.getNoEsq());
 			
 			if(pai == null) { //Se não possuir pai, node é raiz da árvore
+				substituto.setNoDir(paiDoSubsTituto);
 				this.raiz = substituto;
 			}else {//Não é raiz
 				if(substituto.getElemento().compareTo(pai.getElemento()) < 0) { //Substituto é menor que pai
 					pai.setNoEsq(substituto);
-					paiDoSubsTituto.setNoEsq(null);
 				}else { //É maior que pai
 					pai.setNoDir(substituto);
-					paiDoSubsTituto.setNoDir(null);
 				}
+			}
+			
+			//Tratando o pai do substituto
+			if(substituto.getElemento().compareTo(paiDoSubsTituto.getElemento()) < 0) { //substituto é menor que o pai dele
+				paiDoSubsTituto.setNoEsq(null); //Removendo a referência do substituto
+				substituto.setNoDir(paiDoSubsTituto); //Atribuindo o pai do substituto como direita do substituto
+			}else {
+				paiDoSubsTituto.setNoDir(null); //Não é menor, significa que já está referenciado pelo substituto, então basta sumir com a referência ao substituto
 			}
 		}else if(atual.getNoDir() == null && atual.getNoEsq() == null) { 
 			/*
@@ -160,10 +167,8 @@ public class Arvore<T extends Comparable<T>> {
 			}else { //Não é raiz
 				if(atual.getElemento().compareTo(pai.getElemento()) < 0) { //Node a ser removido é menor que pai
 					pai.setNoEsq(null);
-					atual = null;
 				}else { //é maior que o pai
 					pai.setNoDir(null);
-					atual = null;
 				}
 			}
 		}else { 
@@ -175,7 +180,6 @@ public class Arvore<T extends Comparable<T>> {
 			if(pai != null) { //Não é raiz
 				if (atual.getNoDir() != null) { // Possui filho à direita
 					filho = atual.getNoDir();
-					atual = null;
 					if(filho.getElemento().compareTo(pai.getElemento()) < 0) {
 						pai.setNoEsq(filho);
 					}else {
@@ -183,7 +187,6 @@ public class Arvore<T extends Comparable<T>> {
 					}
 				} else { // Possui filho à esquerda
 					filho = atual.getNoEsq();
-					atual = null;
 					if(filho.getElemento().compareTo(pai.getElemento()) < 0) {
 						pai.setNoEsq(filho);
 					}else {
@@ -193,17 +196,18 @@ public class Arvore<T extends Comparable<T>> {
 			}else {//É raiz
 				if (atual.getNoDir() != null) { // Possui filho à direita
 					filho = atual.getNoDir();
-					atual = null;
 					this.raiz = filho;
 				} else { // Possui filho à esquerda
 					filho = atual.getNoEsq();
-					atual = null;
 					this.raiz = filho;
 				}
 			}
 		}
 	}
 
+	/*
+	 * Impresão em preOrdem feita por stringbuilder e usando recursividade
+	 */
 	@Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
